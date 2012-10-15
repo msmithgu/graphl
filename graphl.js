@@ -1,4 +1,4 @@
-d3.text('sherman.txt', function(dsldata) {
+d3.text('graph.txt', function(dsldata) {
   var container = d3.select('body').append("div")
     , textEntry = container.append("textarea")
     , svg = container.append("svg")
