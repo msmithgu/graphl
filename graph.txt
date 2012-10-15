@@ -1,0 +1,19 @@
+Content Manager
+  relies on
+    Content Display
+    Content Repository
+Content Display
+  relies on
+    Content Repository
+www.example.net
+  relies on
+    Content Display
+Web Scraper
+  relies on
+    www.example.net
+Content Repository
+  relies on
+    Web Scraper
+Mobile Application
+  relies on
+    Content Display

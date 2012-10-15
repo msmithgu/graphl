@@ -1,0 +1,36 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  background: #eee;
+  overflow: hidden;
+  font-family: Arial;
+}
+
+textarea, .textTest {
+  width: 240px;
+  height: 480px;
+  padding: 10px;
+  float: left;
+  resize: none;
+}
+
+svg {
+  width: 660px;
+  height: 500px;
+  border: 1px solid #999;
+  background: white;
+}
+
+circle.node {
+  fill: #333;
+}
+
+.cursor {
+  fill: none;
+  stroke: brown;
+  pointer-events: none;
+}
+
+.link {
+  stroke: #999;
+}
