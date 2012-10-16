@@ -7,16 +7,16 @@ html, body {
 }
 
 textarea, .textTest {
-  width: 240px;
-  height: 480px;
+  width: 180px;
+  height: 580px;
   padding: 10px;
   float: left;
   resize: none;
 }
 
 svg {
-  width: 660px;
-  height: 500px;
+  width: 800px;
+  height: 600px;
   border: 1px solid #999;
   background: white;
 }
@@ -33,4 +33,8 @@ circle.node {
 
 .link {
   stroke: #999;
+}
+
+.link-text {
+  fill: #999;
 }

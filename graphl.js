@@ -1,20 +1,28 @@
+var container = d3.select('body').append("form")
+  , textEntry = container.append("textarea")
+  , svg = container.append("svg")
+  ;
+
 d3.text('graph.txt', function(dsldata) {
-  var container = d3.select('body').append("div")
-    , textEntry = container.append("textarea")
-    , svg = container.append("svg")
+  textEntry.text(dsldata);
+
+  translate();
+});
+
+function translate() {
+  var dsldata = textEntry.text()
     , statements = convertDSLtoStatements(dsldata)
     , links = []
     ;
-  textEntry.text(dsldata);
-
   statements.forEach(function(statement) {
     links.push({ source: statement.subject
                , target: statement.noun
+               , label:  statement.verb
                });
   });
 
   buildGraph(svg, links);
-});
+}
 
 function lineIndent(s) {
   var sa = s.match(/^( *)(.*)$/);
@@ -82,7 +90,7 @@ function buildGraph(svg, links, nodes) {
       .links(links)
       .size([width, height])
       .linkDistance(60)
-      .charge(-2700)
+      .charge(-1700)
       .on("tick", tick)
       .start();
 
@@ -90,6 +98,11 @@ function buildGraph(svg, links, nodes) {
       .data(force.links())
     .enter().append("line")
       .attr("class", "link");
+
+  var link_text = svg.selectAll(".link-text")
+      .data(force.links(), function (d){ return d.label; })
+    .enter().append("g").append("text").attr("class", "link-text")
+      .text(function(d) { return d.label; });
 
   var node = svg.selectAll(".node")
       .data(force.nodes())
@@ -100,7 +113,7 @@ function buildGraph(svg, links, nodes) {
       .call(force.drag);
 
   node.append("circle")
-      .attr("r", 8);
+      .attr("r", 4);
 
   node.append("text")
       .attr("x", 12)
@@ -114,6 +127,20 @@ function buildGraph(svg, links, nodes) {
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 
+    link_text
+        .attr("transform", function(d) {
+            var dx = (d.target.x - d.source.x),
+            dy = (d.target.y - d.source.y);
+            var dr = Math.sqrt(dx * dx + dy * dy);
+            var sinus = dy/dr;
+            var cosinus = dx/dr;
+            var l = d.label.length*6;
+            var offset = (1 - (l / dr )) / 2;
+            var x=(d.source.x + dx*offset);
+            var y=(d.source.y + dy*offset);
+            return "translate(" + x + "," + y + ") matrix("+cosinus+", "+sinus+", "+-sinus+", "+cosinus+", 0 , 0)";
+          });
+
     node
         .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
   }
@@ -121,13 +148,13 @@ function buildGraph(svg, links, nodes) {
   function mouseover() {
     d3.select(this).select("circle").transition()
         .duration(750)
-        .attr("r", 12);
+        .attr("r", 8);
   }
 
   function mouseout() {
     d3.select(this).select("circle").transition()
         .duration(750)
-        .attr("r", 8);
+        .attr("r", 4);
   }
 
 }
