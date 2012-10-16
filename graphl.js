@@ -82,7 +82,7 @@ function buildGraph(svg, links, nodes) {
       .links(links)
       .size([width, height])
       .linkDistance(60)
-      .charge(-1700)
+      .charge(-2700)
       .on("tick", tick)
       .start();
 
