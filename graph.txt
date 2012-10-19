@@ -1,35 +1,36 @@
-Romans
-  did for us
-    sanitation
-    medicine
-    education
-    wine
-    public order
-    irrigation
-    roads
-sanitation
-  prevents
-    dirtiness
-    disease
-wine
-  is
-    alcoholic
-    tasty
-  leads to
-    happiness
-    drunkenness
-education
-  enables
-    science
-    literacy
-    medicine
-irrigation
-  is for
-    drinking
-    crops
-  improves
-    sanitation
-roads
-  lead to
-    markets
-    public order
+cda
+  reads from
+    content repository
+cma
+  relies on
+    cda
+    core
+core
+  interacts with
+    message bus
+    MOSS adapter
+  relies on
+    word doc converter
+    cda
+publishing agent(s)
+  interacts with
+    message bus
+  notifies
+    core
+  writes to
+    MOSS adapter
+    content repository
+web scraper
+  reads from
+    www.shrm.org
+  writes to
+    content repository
+MOSS
+  serves
+    www.shrm.org
+MOSS adapter
+  interacts with
+    MOSS
+cda
+  serves
+    mobile.shrm.org

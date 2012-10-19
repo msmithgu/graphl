@@ -16,13 +16,15 @@ textarea, .textTest {
 
 svg {
   width: 800px;
-  height: 600px;
+  height: 768px;
   border: 1px solid #999;
   background: white;
 }
 
 circle.node {
-  fill: #333;
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
 }
 
 .cursor {
@@ -31,10 +33,12 @@ circle.node {
   pointer-events: none;
 }
 
-.link {
+path.link {
+  fill: none;
   stroke: #999;
+  stroke-width: 1.5px;
 }
 
-.link-text {
-  fill: #999;
+text {
+  fill: #000;
 }

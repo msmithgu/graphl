@@ -75,7 +75,12 @@ function buildGraph(svg, links, nodes) {
     , height = parseInt(svg.style('height'))
     , links = links || []
     , nodes = nodes || {}
+    , labels = []
     ;
+
+  links.forEach(function(d) {
+      labels.push(d.label.replace(/ /,'-'));
+    });
 
   // Compute the distinct nodes from the links.
   links.forEach(function(link) {
@@ -89,22 +94,37 @@ function buildGraph(svg, links, nodes) {
       .nodes(d3.values(nodes))
       .links(links)
       .size([width, height])
-      .linkDistance(60)
+      .linkDistance(150)
       .charge(-1700)
       .on("tick", tick)
       .start();
 
-  var link = svg.selectAll(".link")
-      .data(force.links())
-    .enter().append("line")
-      .attr("class", "link");
+  // Per-type markers, as they don't inherit styles?
+  svg.append("svg:defs").selectAll("marker")
+      .data(labels)
+    .enter().append("svg:marker")
+      .attr("id", String)
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 15)
+      .attr("refY", -1.5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+    .append("svg:path")
+      .attr("d", "M0,-5L10,0L0,5");
 
-  var link_text = svg.selectAll(".link-text")
+  var path = svg.append("svg:g").selectAll("path")
+      .data(force.links())
+    .enter().append("path")
+      .attr("class", function(d) { return "link " + d.type; })
+      .attr("marker-end", function(d) { return "url(#" + d.label.replace(/ /,'-') + ")"; });
+
+  var path_text = svg.append("svg:g").selectAll(".path-text")
       .data(force.links(), function (d){ return d.label; })
-    .enter().append("g").append("text").attr("class", "link-text")
+    .enter().append("text").attr("class", "path-text")
       .text(function(d) { return d.label; });
 
-  var node = svg.selectAll(".node")
+  var node = svg.append("svg:g").selectAll(".node")
       .data(force.nodes())
     .enter().append("g")
       .attr("class", "node")
@@ -113,6 +133,7 @@ function buildGraph(svg, links, nodes) {
       .call(force.drag);
 
   node.append("circle")
+      .attr("class", "node")
       .attr("r", 4);
 
   node.append("text")
@@ -121,24 +142,27 @@ function buildGraph(svg, links, nodes) {
       .text(function(d) { return d.name; });
 
   function tick() {
-    link
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+    path.attr("d", function (d) {
+        var dx = d.target.x - d.source.x
+          , dy = d.target.y - d.source.y
+          , dr = Math.sqrt(dx * dx + dy * dy);
+        return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+      });
 
-    link_text
+    path_text
         .attr("transform", function(d) {
-            var dx = (d.target.x - d.source.x),
-            dy = (d.target.y - d.source.y);
-            var dr = Math.sqrt(dx * dx + dy * dy);
-            var sinus = dy/dr;
-            var cosinus = dx/dr;
-            var l = d.label.length*6;
-            var offset = (1 - (l / dr )) / 2;
-            var x=(d.source.x + dx*offset);
-            var y=(d.source.y + dy*offset);
-            return "translate(" + x + "," + y + ") matrix("+cosinus+", "+sinus+", "+-sinus+", "+cosinus+", 0 , 0)";
+            var dx = (d.target.x - d.source.x)
+              , dy = (d.target.y - d.source.y)
+              , dr = Math.sqrt(dx * dx + dy * dy)
+              , sinus = dy/dr
+              , cosinus = dx/dr
+              , l = d.label.length*6
+              , hoffset = (1 - (l / dr )) / 2
+              , voffset = dr / 6
+              , x= d.source.x + dx*hoffset + voffset*sinus
+              , y= d.source.y + dy*hoffset - voffset*cosinus;
+
+            return "translate(" + x + "," + y + ") matrix("+cosinus+", "+sinus+", "+-sinus+", "+cosinus+", 0, 0)";
           });
 
     node
